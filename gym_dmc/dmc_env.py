@@ -1,5 +1,6 @@
 import gym
 from gym import spaces
+import numpy as np
 
 from dm_control import suite
 from dm_env import specs
@@ -92,12 +93,12 @@ class DMCEnv(gym.Env):
 
         return obs
 
-    def render(self, mode='rgb', height=None, width=None, camera_id=0, **kwargs):
+    def render(self, mode='human', height=None, width=None, camera_id=0, **kwargs):
         img = self.env.physics.render(
             width=self.render_kwargs['width'] if width is None else width,
             height=self.render_kwargs['height'] if height is None else height,
             camera_id=self.render_kwargs['camera_id'] if camera_id is None else camera_id,
-            **kwargs)
+            **kwargs).astype(np.uint8)
         if mode in ['rgb', 'rgb_array']:
             return img
         elif mode in ['gray', 'grey']:
@@ -105,7 +106,7 @@ class DMCEnv(gym.Env):
         elif mode == 'notebook':
             from IPython.display import display
             from PIL import Image
-            img = Image.fromarray(img)
+            img = Image.fromarray(img, "RGB")
             display(img)
             return img
         elif mode == 'human':
