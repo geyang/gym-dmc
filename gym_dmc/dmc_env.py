@@ -76,14 +76,21 @@ class DMCEnv(gym.Env):
         obs = ts.observation
 
         if self.img_obs:
-            img = self.render("gray" if self.gray_scale else "rgb", **self.render_kwargs)
-            obs['img'] = img.transpose([1, 2, 0]) if self.channels_first else img
+            obs['img'] = self._get_obs_img()
 
         return obs, reward, done, extra
 
+    def _get_obs_img(self):
+        img = self.render("gray" if self.gray_scale else "rgb", **self.render_kwargs)
+        return img.transpose([2, 0, 1]) if self.channels_first else img
+
     def reset(self):
-        timestep = self.env.reset()
-        return timestep.observation
+        obs = self.env.reset().observation
+
+        if self.img_obs:
+            obs['img'] = self._get_obs_img()
+
+        return obs
 
     def render(self, mode='rgb', height=None, width=None, camera_id=0, **kwargs):
         img = self.env.physics.render(
