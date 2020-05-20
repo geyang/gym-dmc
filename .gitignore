@@ -1,0 +1,15 @@
+**/.DS_Store
+.ipynb_checkpoints
+.yours
+.idea
+__pycache__
+*.pyc
+data
+datasets
+*jaynes.yml
+*.egg-info
+**/videos
+**/data
+**/training
+dist
+build
