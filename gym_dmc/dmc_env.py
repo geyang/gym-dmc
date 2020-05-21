@@ -98,11 +98,11 @@ class DMCEnv(gym.Env):
             width=self.render_kwargs['width'] if width is None else width,
             height=self.render_kwargs['height'] if height is None else height,
             camera_id=self.render_kwargs['camera_id'] if camera_id is None else camera_id,
-            **kwargs).astype(np.uint8)
+            **kwargs)
         if mode in ['rgb', 'rgb_array']:
-            return img
+            return img.astype(np.uint8)
         elif mode in ['gray', 'grey']:
-            return img.mean(axis=-1, keepdims=True)
+            return img.mean(axis=-1, keepdims=True).astype(np.uint8)
         elif mode == 'notebook':
             from IPython.display import display
             from PIL import Image
