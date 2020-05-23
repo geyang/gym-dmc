@@ -37,7 +37,10 @@ class DMCEnv(gym.Env):
                  frame_skip=1,
                  channels_first=True,
                  img_obs=False,
-                 gray_scale=True
+                 gray_scale=True,
+                 warmstart=True,  # info: https://github.com/deepmind/dm_control/issues/64
+                 no_gravity=False,
+                 non_newtonian=False
                  ):
         self.env = suite.load(domain_name,
                               task_name,
@@ -60,26 +63,46 @@ class DMCEnv(gym.Env):
         self.img_obs = img_obs
         self.gray_scale = gray_scale
         self.channels_first = channels_first
+        if not warmstart:
+            self.env.physics.data.qacc_warmstart[:] = 0
+        self.no_gravity = no_gravity
+        self.non_newtonian = non_newtonian
 
-    def seed(self, seed):
+        if self.no_gravity:  # info: this removes gravity.
+            self.turn_off_gravity()
+
+    def turn_off_gravity(self):
+        # note: specifically for manipulator
+        self.env.physisc.body_mass[:-2] = 0
+
+    def seed(self, seed=None):
         return self.env.task.random.seed(seed)
+
+    def set_state(self, state):
+        # note: missing the goal positions.
+        # self.env.physics.
+        self.env.physics.set_state(state)
+        self.step([0])
 
     def step(self, action):
         reward = 0
-        extra = {'sim_state': self.env.physics.get_state().copy()}
 
         for i in range(self.frame_skip):
             ts = self.env.step(action)
+            if self.non_newtonian:  # zero velocity if non newtonian
+                self.env.physics.data.qvel[:] = 0
             reward += ts.reward or 0
             done = ts.last()
             if done:
                 break
-        obs = ts.observation
 
+        sim_state = self.env.physics.get_state().copy()
+
+        obs = ts.observation
         if self.img_obs:
             obs['img'] = self._get_obs_img()
 
-        return obs, reward, done, extra
+        return obs, reward, done, dict(sim_state=sim_state)
 
     def _get_obs_img(self):
         img = self.render("gray" if self.gray_scale else "rgb", **self.render_kwargs)
