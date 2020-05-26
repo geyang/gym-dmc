@@ -9,7 +9,7 @@ Usage pattern:
 ```python
 import gym
 
-env = gym.make("gym_dmc:Pendulum_swingup-v1")
+env = gym.make("gym_dmc:Pendulum-swingup-v1")
 ```
 
 For the full list of environments, you can print:
@@ -24,4 +24,4 @@ print(*ALL_TASKS, sep="\n")
 ```
 We register all of these environments using the following
 pattern:
-> acrobot task "swingup_sparse" becomes "gym_dmc:Acrobot_swingup_sparse-v1"
+> acrobot task "swingup_sparse" becomes "gym_dmc:Acrobot-swingup_sparse-v1"

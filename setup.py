@@ -12,6 +12,6 @@ setup(name='gym-dmc',
       ],
       description='gym-dmc',
       author='Ge Yang<ge.ike.yang@gmail.com>',
-      url='https://github.com/geyang/gym_dmc',
+      url='https://github.com/geyang/gym-dmc',
       author_email='ge.ike.yang@gmail.com',
       version=version)
