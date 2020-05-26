@@ -40,7 +40,8 @@ class DMCEnv(gym.Env):
                  gray_scale=True,
                  warmstart=True,  # info: https://github.com/deepmind/dm_control/issues/64
                  no_gravity=False,
-                 non_newtonian=False
+                 non_newtonian=False,
+                 skip_start=None,  # useful in Manipulator for letting things settle
                  ):
         self.env = suite.load(domain_name,
                               task_name,
@@ -71,8 +72,10 @@ class DMCEnv(gym.Env):
         if self.no_gravity:  # info: this removes gravity.
             self.turn_off_gravity()
 
+        self.skip_start = skip_start
+
     def turn_off_gravity(self):
-        # note: specifically for manipulator
+        # note: specifically for manipulator, lets the object fall.
         self.env.physisc.body_mass[:-2] = 0
 
     def seed(self, seed=None):
@@ -110,6 +113,8 @@ class DMCEnv(gym.Env):
 
     def reset(self):
         obs = self.env.reset().observation
+        for i in range(self.skip_start):
+            obs = self.env.step([0]).observation
 
         if self.img_obs:
             obs['img'] = self._get_obs_img()
