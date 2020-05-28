@@ -12,5 +12,3 @@ for domain_name, task_name in suite.ALL_TASKS:
                          height=84,
                          frame_skip=4),
              )
-    # does this interfere with frame_skip?
-    # max_episode_steps=1000)

@@ -113,7 +113,7 @@ class DMCEnv(gym.Env):
 
     def reset(self):
         obs = self.env.reset().observation
-        for i in range(self.skip_start):
+        for i in range(self.skip_start or 0):
             obs = self.env.step([0]).observation
 
         if self.img_obs:
