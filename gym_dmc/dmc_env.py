@@ -1,12 +1,11 @@
 import gym
-from gym import spaces
 import numpy as np
-
 from dm_control import suite
 from dm_env import specs
+from gym import spaces
 
 
-def convert_dm_control_to_gym_space(dm_control_space):
+def convert_dm_control_to_gym_space(dm_control_space, **kwargs):
     r"""Convert dm_control space to gym space. """
     if isinstance(dm_control_space, specs.BoundedArray):
         space = spaces.Box(low=dm_control_space.minimum,
@@ -21,8 +20,11 @@ def convert_dm_control_to_gym_space(dm_control_space):
                            dtype=dm_control_space.dtype)
         return space
     elif isinstance(dm_control_space, dict):
-        space = spaces.Dict({key: convert_dm_control_to_gym_space(value)
-                             for key, value in dm_control_space.items()})
+        kwargs.update(
+            {key: convert_dm_control_to_gym_space(value)
+             for key, value in dm_control_space.items()}
+        )
+        space = spaces.Dict(kwargs)
         return space
 
 
@@ -36,8 +38,8 @@ class DMCEnv(gym.Env):
                  camera_id=0,
                  frame_skip=1,
                  channels_first=True,
-                 img_obs=False,
-                 gray_scale=True,
+                 from_pixels=False,
+                 gray_scale=False,
                  warmstart=True,  # info: https://github.com/deepmind/dm_control/issues/64
                  no_gravity=False,
                  non_newtonian=False,
@@ -51,7 +53,19 @@ class DMCEnv(gym.Env):
         self.metadata = {'render.modes': ['human', 'rgb_array'],
                          'video.frames_per_second': round(1.0 / self.env.control_timestep())}
 
-        self.observation_space = convert_dm_control_to_gym_space(self.env.observation_spec())
+        self.from_pixels = from_pixels
+        self.gray_scale = gray_scale
+        self.channels_first = channels_first
+        obs_spec = self.env.observation_spec()
+        if from_pixels:
+            color_dim = 1 if gray_scale else 3
+            image_shape = [width, height, color_dim] if channels_first else [width, height, color_dim]
+            self.observation_space = convert_dm_control_to_gym_space(
+                obs_spec,
+                pixels=spaces.Box(low=0, high=255, shape=image_shape, dtype=np.uint8)
+            )
+        else:
+            self.observation_space = convert_dm_control_to_gym_space(obs_spec, )
         self.action_space = convert_dm_control_to_gym_space(self.env.action_spec())
         self.viewer = None
 
@@ -61,9 +75,6 @@ class DMCEnv(gym.Env):
             camera_id=camera_id,
         )
         self.frame_skip = frame_skip
-        self.img_obs = img_obs
-        self.gray_scale = gray_scale
-        self.channels_first = channels_first
         if not warmstart:
             self.env.physics.data.qacc_warmstart[:] = 0
         self.no_gravity = no_gravity
@@ -79,6 +90,7 @@ class DMCEnv(gym.Env):
         self.env.physisc.body_mass[:-2] = 0
 
     def seed(self, seed=None):
+        self.action_space.seed(seed)
         return self.env.task.random.seed(seed)
 
     def set_state(self, state):
@@ -102,12 +114,12 @@ class DMCEnv(gym.Env):
         sim_state = self.env.physics.get_state().copy()
 
         obs = ts.observation
-        if self.img_obs:
-            obs['img'] = self._get_obs_img()
+        if self.from_pixels:
+            obs['pixels'] = self._get_obs_pixels()
 
         return obs, reward, done, dict(sim_state=sim_state)
 
-    def _get_obs_img(self):
+    def _get_obs_pixels(self):
         img = self.render("gray" if self.gray_scale else "rgb", **self.render_kwargs)
         return img.transpose([2, 0, 1]) if self.channels_first else img
 
@@ -116,8 +128,8 @@ class DMCEnv(gym.Env):
         for i in range(self.skip_start or 0):
             obs = self.env.step([0]).observation
 
-        if self.img_obs:
-            obs['img'] = self._get_obs_img()
+        if self.from_pixels:
+            obs['pixels'] = self._get_obs_pixels()
 
         return obs
 
