@@ -29,3 +29,5 @@ for domain_name, task_name in suite.ALL_TASKS:
                  height=84,
                  frame_skip=4),
              )
+
+DMC_IS_REGISTERED = True
