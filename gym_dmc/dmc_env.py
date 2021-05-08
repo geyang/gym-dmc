@@ -59,7 +59,7 @@ class DMCEnv(gym.Env):
         obs_spec = self.env.observation_spec()
         if from_pixels:
             color_dim = 1 if gray_scale else 3
-            image_shape = [width, height, color_dim] if channels_first else [width, height, color_dim]
+            image_shape = [color_dim, width, height] if channels_first else [width, height, color_dim]
             self.observation_space = convert_dm_control_to_gym_space(
                 obs_spec,
                 pixels=spaces.Box(low=0, high=255, shape=image_shape, dtype=np.uint8)
