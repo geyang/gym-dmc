@@ -8,6 +8,8 @@ with open(path.join(path.abspath(path.dirname(__file__)), 'VERSION'), encoding='
 with open(path.join(path.abspath(path.dirname(__file__)), 'README'), encoding='utf-8') as f:
     long_description = f.read()
 
+packages = find_packages(exclude="specs")
+
 setup(name='gym-dmc',
       packages=find_packages(exclude="specs"),
       install_requires=[

@@ -32,7 +32,7 @@ We register all of these environments using the following pattern:
    ``dmc:Acrobot-swingup_sparse-v1``
 
 You can see the usage patten
-in \ `https://github.com/geyang/gym_dmc/blob/master/specs/test_gym_dmc.py <https://github.com/geyang/gym_dmc/blob/master/specs/test_gym_dmc.py>`__:
+in `https://github.com/geyang/gym_dmc/blob/master/specs/test_gym_dmc.py <https://github.com/geyang/gym_dmc/blob/master/specs/test_gym_dmc.py>`__:
 
 .. code-block:: python
 
@@ -55,9 +55,9 @@ in \ `https://github.com/geyang/gym_dmc/blob/master/specs/test_gym_dmc.py <http
    assert env._max_episode_steps == 125
    assert env.reset().shape == (84, 84, 1)
 
-**Note, the \ ``max_episode_steps`` is calculated based on the
+**Note, the ``max_episode_steps`` is calculated based on the
 ``frame_skip``.** All DeepMind control domains terminate after 1000
-simulation steps. So for \ ``frame_skip=4``,
-the \ ``max_episode_steps`` should be 250.
+simulation steps. So for ``frame_skip=4``,
+the ``max_episode_steps`` should be 250.
 
 Built with :heart: by Ge Yang
