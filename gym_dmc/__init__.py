@@ -3,7 +3,7 @@ from gym.envs import register
 
 
 def make_env(flatten_obs=True, from_pixels=False, frame_skip=1, max_episode_steps=1000, **kwargs):
-    max_episode_steps /= frame_skip
+    max_episode_steps = int(max_episode_steps / frame_skip)
 
     from gym_dmc.dmc_env import DMCEnv
     env = DMCEnv(from_pixels=from_pixels, frame_skip=frame_skip, **kwargs)

@@ -134,6 +134,10 @@ class DMCEnv(gym.Env):
         return obs
 
     def render(self, mode='human', height=None, width=None, camera_id=0, **kwargs):
+        if mode == 'human':
+            height = 480
+            width =  640
+            camera_id = 1
         img = self.env.physics.render(
             width=self.render_kwargs['width'] if width is None else width,
             height=self.render_kwargs['height'] if height is None else height,
@@ -150,8 +154,11 @@ class DMCEnv(gym.Env):
             display(img)
             return img
         elif mode == 'human':
-            from PIL import Image
-            return Image.fromarray(img)
+            # from PIL import Image
+            # return Image.fromarray(img)
+            import cv2
+            cv2.imshow("DMC Visualizer", cv2.cvtColor(img.astype(np.uint8), cv2.COLOR_BGR2RGB))
+            cv2.waitKey(int(1000 / 30))
         else:
             raise NotImplementedError(f"`{mode}` mode is not implemented")
 
