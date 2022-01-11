@@ -11,7 +11,7 @@ def make_env(flatten_obs=True, from_pixels=False, frame_skip=1, max_episode_step
         from gym_dmc.wrappers import ObservationByKey
         env = ObservationByKey(env, "pixels")
     elif flatten_obs:
-        from gym.wrappers import FlattenObservation
+        from gym_dmc.wrappers import FlattenObservation
         env = FlattenObservation(env)
     from gym.wrappers import TimeLimit
     return TimeLimit(env, max_episode_steps=max_episode_steps)

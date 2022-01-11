@@ -5,7 +5,16 @@ Link to other OpenAI Gym Plugins:
 - `gym-sawyer`
 - `gym-toy-nav`
 
+
+
+## Update Log
+
+- **2022-01-11**: Added a `env._get_obs()` method to allow one to obtain the observation after resetting the environment. **Version: `v0.2.1`**
+
+## How To Use
+
 Usage pattern:
+
 ```python
 import gym
 
@@ -27,7 +36,7 @@ pattern:
 
 > acrobot task "swingup_sparse" becomes `dmc:Acrobot-swingup_sparse-v1`
 
-You can see the usage patten in [./specs/test_gym_dmc.py](./specs/test_gym_dmc.py):
+You can see the usage patten in [./specs/test_gym_dmc.py](./specs/test_gym_dmc.py):
 
 ```python
 env = gym.make('dmc:Walker-walk-v1', frame_skip=4)
@@ -50,6 +59,6 @@ assert env._max_episode_steps == 125
 assert env.reset().shape == (84, 84, 1)
 ```
 
-**Note, the `max_episode_steps` is calculated based on the `frame_skip`.** All DeepMind control domains terminate after 1000 simulation steps. So for `frame_skip=4`, the `max_episode_steps` should be 250.
+**Note, the `max_episode_steps` is calculated based on the `frame_skip`.** All DeepMind control domains terminate after 1000 simulation steps. So for `frame_skip=4`, the `max_episode_steps` should be 250.
 
-Built with :heart: by Ge Yang
+Built with :heart: by Ge Yang
