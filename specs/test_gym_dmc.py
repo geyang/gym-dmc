@@ -1,4 +1,5 @@
 import gym
+import numpy as np
 
 
 def test_max_episode_steps():
@@ -9,6 +10,12 @@ def test_max_episode_steps():
 def test_flat_obs():
     env = gym.make('dmc:Walker-walk-v1', frame_skip=4)
     assert env.reset().shape == (24,)
+
+
+def test_flat_obs():
+    env = gym.make('dmc:Walker-walk-v1', frame_skip=4, space_dtype=np.float32)
+    assert env.action_space.dtype == np.float32
+    assert env.observation_space.dtype == np.float32
 
 
 def test_frame_skip():
