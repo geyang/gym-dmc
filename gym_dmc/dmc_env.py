@@ -5,23 +5,23 @@ from dm_env import specs
 from gym import spaces
 
 
-def convert_dm_control_to_gym_space(dm_control_space, **kwargs):
-    r"""Convert dm_control space to gym space. """
+def convert_dm_control_to_gym_space(dm_control_space, dtype=None, **kwargs):
+    """Convert dm_control space to gym space. """
     if isinstance(dm_control_space, specs.BoundedArray):
         space = spaces.Box(low=dm_control_space.minimum,
                            high=dm_control_space.maximum,
-                           dtype=dm_control_space.dtype)
+                           dtype=dtype or dm_control_space.dtype)
         assert space.shape == dm_control_space.shape
         return space
     elif isinstance(dm_control_space, specs.Array) and not isinstance(dm_control_space, specs.BoundedArray):
         space = spaces.Box(low=-float('inf'),
                            high=float('inf'),
                            shape=dm_control_space.shape,
-                           dtype=dm_control_space.dtype)
+                           dtype=dtype or dm_control_space.dtype)
         return space
     elif isinstance(dm_control_space, dict):
         kwargs.update(
-            {key: convert_dm_control_to_gym_space(value)
+            {key: convert_dm_control_to_gym_space(value, dtype=dtype)
              for key, value in dm_control_space.items()}
         )
         space = spaces.Dict(kwargs)
@@ -44,6 +44,7 @@ class DMCEnv(gym.Env):
                  no_gravity=False,
                  non_newtonian=False,
                  skip_start=None,  # useful in Manipulator for letting things settle
+                 space_dtype=None,  # default to float for consistency
                  ):
         self.env = suite.load(domain_name,
                               task_name,
@@ -61,12 +62,12 @@ class DMCEnv(gym.Env):
             color_dim = 1 if gray_scale else 3
             image_shape = [color_dim, width, height] if channels_first else [width, height, color_dim]
             self.observation_space = convert_dm_control_to_gym_space(
-                obs_spec,
+                obs_spec, dtype=space_dtype,
                 pixels=spaces.Box(low=0, high=255, shape=image_shape, dtype=np.uint8)
             )
         else:
-            self.observation_space = convert_dm_control_to_gym_space(obs_spec, )
-        self.action_space = convert_dm_control_to_gym_space(self.env.action_spec())
+            self.observation_space = convert_dm_control_to_gym_space(obs_spec, dtype=space_dtype)
+        self.action_space = convert_dm_control_to_gym_space(self.env.action_spec(), dtype=space_dtype)
         self.viewer = None
 
         self.render_kwargs = dict(
