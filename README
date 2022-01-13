@@ -6,6 +6,16 @@ Link to other OpenAI Gym Plugins:
 -  ``gym-sawyer``
 -  ``gym-toy-nav``
 
+Update Log
+----------
+
+-  **2022-01-11**: Added a ``env._get_obs()`` method to allow one to
+   obtain the observation after resetting the environment. **Version:
+   ``v0.2.1``**
+
+How To Use
+----------
+
 Usage pattern:
 
 .. code-block:: python
@@ -31,8 +41,8 @@ We register all of these environments using the following pattern:
    acrobot task “swingup_sparse” becomes
    ``dmc:Acrobot-swingup_sparse-v1``
 
-You can see the usage patten
-in `https://github.com/geyang/gym_dmc/blob/master/specs/test_gym_dmc.py <https://github.com/geyang/gym_dmc/blob/master/specs/test_gym_dmc.py>`__:
+You can see the usage patten in
+`https://github.com/geyang/gym_dmc/blob/master/specs/test_gym_dmc.py <https://github.com/geyang/gym_dmc/blob/master/specs/test_gym_dmc.py>`__:
 
 .. code-block:: python
 
@@ -55,9 +65,9 @@ in `https://github.com/geyang/gym_dmc/blob/master/specs/test_gym_dmc.py <https:
    assert env._max_episode_steps == 125
    assert env.reset().shape == (84, 84, 1)
 
-**Note, the ``max_episode_steps`` is calculated based on the
-``frame_skip``.** All DeepMind control domains terminate after 1000
-simulation steps. So for ``frame_skip=4``,
-the ``max_episode_steps`` should be 250.
+**Note, the ``max_episode_steps`` is calculated based on the
+``frame_skip``.** All DeepMind control domains terminate after 1000
+simulation steps. So for ``frame_skip=4``, the ``max_episode_steps``
+should be 250.
 
-Built with :heart: by Ge Yang
+Built with :heart: by Ge Yang

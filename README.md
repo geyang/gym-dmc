@@ -9,6 +9,7 @@ Link to other OpenAI Gym Plugins:
 
 ## Update Log
 
+- **2022-01-13**: Add space_dtype for overriding the dtype for the state and action spaces. Default to None, need to set to `float/np.float32` for pytorch_SAC implementation.
 - **2022-01-11**: Added a `env._get_obs()` method to allow one to obtain the observation after resetting the environment. **Version: `v0.2.1`**
 
 ## How To Use
@@ -36,9 +37,13 @@ pattern:
 
 > acrobot task "swingup_sparse" becomes `dmc:Acrobot-swingup_sparse-v1`
 
-You can see the usage patten in [./specs/test_gym_dmc.py](./specs/test_gym_dmc.py):
+You can see the usage pattern in [./specs/test_gym_dmc.py](./specs/test_gym_dmc.py):
 
 ```python
+env = gym.make('dmc:Walker-walk-v1', frame_skip=4, space_dtype=np.float32)
+assert env.action_space.dtype is np.float32
+assert env.observation_space.dtype is np.float32
+
 env = gym.make('dmc:Walker-walk-v1', frame_skip=4)
 assert env._max_episode_steps == 250
 assert env.reset().shape == (24,)
