@@ -120,10 +120,10 @@ class DMCEnv(gym.Env):
 
         return obs, reward, done, dict(sim_state=sim_state)
 
-    def _get_obs(self):
+    def get_obs(self):
         return self.env.task.get_observation(self.env.physics)
 
-    def _get_obs_pixels(self):
+    def get_obs_pixels(self):
         img = self.render("gray" if self.gray_scale else "rgb", **self.render_kwargs)
         return img.transpose([2, 0, 1]) if self.channels_first else img
 
