@@ -29,6 +29,16 @@ def convert_dm_control_to_gym_space(dm_control_space, dtype=None, **kwargs):
 
 
 class DMCEnv(gym.Env):
+    @property
+    def spec(self):
+        return self._spec
+
+    @spec.setter
+    def spec(self, spec):
+        # fuck new gym.
+        spec.max_episode_steps = self._spec.max_episode_steps
+        self._spec = spec
+
     def __init__(self, domain_name, task_name,
                  task_kwargs=None,
                  environment_kwargs=None,
@@ -120,10 +130,10 @@ class DMCEnv(gym.Env):
 
         return obs, reward, done, dict(sim_state=sim_state)
 
-    def get_obs(self):
+    def _get_obs(self):
         return self.env.task.get_observation(self.env.physics)
 
-    def get_obs_pixels(self):
+    def _get_obs_pixels(self):
         img = self.render("gray" if self.gray_scale else "rgb", **self.render_kwargs)
         return img.transpose([2, 0, 1]) if self.channels_first else img
 
