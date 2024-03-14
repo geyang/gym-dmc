@@ -2,6 +2,8 @@ from dm_control import suite
 from gym.envs import register
 from gym.envs.registration import EnvSpec
 
+ALL_ENVS = []
+
 
 def make_env(flatten_obs=True, from_pixels=False, frame_skip=1, episode_frames=1000, id=None, **kwargs):
     max_episode_steps = episode_frames / frame_skip
@@ -25,6 +27,7 @@ def make_env(flatten_obs=True, from_pixels=False, frame_skip=1, episode_frames=1
 
 for domain_name, task_name in suite.ALL_TASKS:
     ID = f'{domain_name.capitalize()}-{task_name}-v1'
+    ALL_ENVS.append(ID)
     register(id=ID,
              entry_point='gym_dmc:make_env',
              kwargs=dict(
