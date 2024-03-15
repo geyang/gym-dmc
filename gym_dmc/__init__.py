@@ -14,7 +14,11 @@ def make_env(flatten_obs=True, from_pixels=False, frame_skip=1, episode_frames=1
     # This spec object gets picked up by the gym.EnvSpecs constructor
     # used in gym.registration.EnvSpec.make, L:93 to generate the spec
     if id:
-        env._spec = EnvSpec(id=f"{domain_name.capitalize()}-{task_name}-v1", max_episode_steps=max_episode_steps)
+        env._spec = EnvSpec(
+            id=f"{domain_name.capitalize()}-{task_name}-v1",
+            entry_point="gym_dmc:make_env",
+            max_episode_steps=max_episode_steps,
+        )
 
     if from_pixels:
         from gym_dmc.wrappers import ObservationByKey
