@@ -138,14 +138,17 @@ class DMCEnv(gym.Env):
         return img.transpose([2, 0, 1]) if self.channels_first else img
 
     def reset(self):
-        obs = self.env.reset().observation
+        timestep = self.env.reset()
+        obs = timestep.observation
         for i in range(self.skip_start or 0):
-            obs = self.env.step([0]).observation
+            timestep = self.env.step([0])
+            obs = timestep.observation
 
         if self.from_pixels:
             obs['pixels'] = self._get_obs_pixels()
 
-        return obs
+        # newer gym require a second return item, info.
+        return obs, {}
 
     def render(self, mode='human', height=None, width=None, camera_id=0, **kwargs):
         img = self.env.physics.render(

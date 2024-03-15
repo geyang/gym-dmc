@@ -14,12 +14,14 @@ def test_frame_skip():
 
 def test_pixel_output():
     env = gym.make('dmc:Walker-walk-v1', from_pixels=True, frame_skip=8)
-    assert env.reset().shape == (3, 84, 84)
+    obs, info = env.reset()
+    assert obs.shape == (3, 84, 84)
 
 
 def test_flat_obs():
     env = gym.make('dmc:Walker-walk-v1', frame_skip=4)
-    assert env.reset().shape == (24,)
+    obs, info = env.reset()
+    assert obs.shape == (24,)
 
 
 def test_flat_space_dtype():
@@ -31,11 +33,13 @@ def test_flat_space_dtype():
 def test_channel_first():
     env = gym.make('dmc:Walker-walk-v1', from_pixels=True, frame_skip=8, channels_first=False)
     assert env.spec.max_episode_steps == 125
-    assert env.reset().shape == (84, 84, 3)
+    obs, info = env.reset()
+    assert obs.shape == (84, 84, 3)
 
 
 def test_gray_scale():
     env = gym.make('dmc:Walker-walk-v1', from_pixels=True, frame_skip=8, channels_first=False,
                    gray_scale=True)
     assert env.spec.max_episode_steps == 125
-    assert env.reset().shape == (84, 84, 1)
+    obs, info = env.reset()
+    assert obs.shape == (84, 84, 1)
