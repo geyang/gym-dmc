@@ -1,12 +1,9 @@
-from typing import Union
-
 import gym
 import numpy as np
 from dm_control import suite
 from dm_env import specs
 from gym import spaces
 from numpy.typing import NDArray
-from PIL import Image
 
 
 def convert_dm_control_to_gym_space(dm_control_space, dtype=None, **kwargs):
@@ -178,7 +175,7 @@ class DMCEnv(gym.Env):
 
     def render(
         self, mode="human", height=None, width=None, camera_id=0, **kwargs
-    ) -> Union[NDArray, Image.Image]:
+    ) -> NDArray:
         img = self.env.physics.render(
             width=self.render_kwargs["width"] if width is None else width,
             height=self.render_kwargs["height"] if height is None else height,
@@ -193,6 +190,7 @@ class DMCEnv(gym.Env):
             return img.mean(axis=-1, keepdims=True).astype(np.uint8)
         elif mode == "notebook":
             from IPython.display import display
+            from PIL import Image
 
             pil_img = Image.fromarray(img, "RGB")
             display(pil_img)

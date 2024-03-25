@@ -5,10 +5,9 @@ Link to other OpenAI Gym Plugins:
 - `gym-sawyer`
 - `gym-toy-nav`
 
-
-
 ## Update Log
 
+- **2024-03-25**: Return `np.Array` from `env.render()` function
 - **2022-01-13**: Add space_dtype for overriding the dtype for the state and action spaces. Default to None, need to set to `float/np.float32` for pytorch_SAC implementation.
 - **2022-01-11**: Added a `env._get_obs()` method to allow one to obtain the observation after resetting the environment. **Version: `v0.2.1`**
 
@@ -23,6 +22,7 @@ env = gym.make("dmc:Pendulum-swingup-v1")
 ```
 
 For the full list of environments, you can print:
+
 ```python
 from dm_control.suite import ALL_TASKS
 
@@ -32,6 +32,7 @@ print(*ALL_TASKS, sep="\n")
 #         ('acrobot', 'swingup_sparse')
 ...
 ```
+
 We register all of these environments using the following
 pattern:
 
