@@ -1,28 +1,40 @@
+from typing import Union
+
 import gym
 import numpy as np
 from dm_control import suite
 from dm_env import specs
 from gym import spaces
+from numpy.typing import NDArray
+from PIL import Image
 
 
 def convert_dm_control_to_gym_space(dm_control_space, dtype=None, **kwargs):
-    """Convert dm_control space to gym space. """
+    """Convert dm_control space to gym space."""
     if isinstance(dm_control_space, specs.BoundedArray):
-        space = spaces.Box(low=dm_control_space.minimum,
-                           high=dm_control_space.maximum,
-                           dtype=dtype or dm_control_space.dtype)
+        space = spaces.Box(
+            low=dm_control_space.minimum,
+            high=dm_control_space.maximum,
+            dtype=dtype or dm_control_space.dtype,
+        )
         assert space.shape == dm_control_space.shape
         return space
-    elif isinstance(dm_control_space, specs.Array) and not isinstance(dm_control_space, specs.BoundedArray):
-        space = spaces.Box(low=-float('inf'),
-                           high=float('inf'),
-                           shape=dm_control_space.shape,
-                           dtype=dtype or dm_control_space.dtype)
+    elif isinstance(dm_control_space, specs.Array) and not isinstance(
+        dm_control_space, specs.BoundedArray
+    ):
+        space = spaces.Box(
+            low=-float("inf"),
+            high=float("inf"),
+            shape=dm_control_space.shape,
+            dtype=dtype or dm_control_space.dtype,
+        )
         return space
     elif isinstance(dm_control_space, dict):
         kwargs.update(
-            {key: convert_dm_control_to_gym_space(value, dtype=dtype)
-             for key, value in dm_control_space.items()}
+            {
+                key: convert_dm_control_to_gym_space(value, dtype=dtype)
+                for key, value in dm_control_space.items()
+            }
         )
         space = spaces.Dict(kwargs)
         return space
@@ -39,30 +51,38 @@ class DMCEnv(gym.Env):
         spec.max_episode_steps = self._spec.max_episode_steps
         self._spec = spec
 
-    def __init__(self, domain_name, task_name,
-                 task_kwargs=None,
-                 environment_kwargs=None,
-                 visualize_reward=False,
-                 height=84,
-                 width=84,
-                 camera_id=0,
-                 frame_skip=1,
-                 channels_first=True,
-                 from_pixels=False,
-                 gray_scale=False,
-                 warmstart=True,  # info: https://github.com/deepmind/dm_control/issues/64
-                 no_gravity=False,
-                 non_newtonian=False,
-                 skip_start=None,  # useful in Manipulator for letting things settle
-                 space_dtype=None,  # default to float for consistency
-                 ):
-        self.env = suite.load(domain_name,
-                              task_name,
-                              task_kwargs=task_kwargs,
-                              environment_kwargs=environment_kwargs,
-                              visualize_reward=visualize_reward)
-        self.metadata = {'render.modes': ['human', 'rgb_array'],
-                         'video.frames_per_second': round(1.0 / self.env.control_timestep())}
+    def __init__(
+        self,
+        domain_name,
+        task_name,
+        task_kwargs=None,
+        environment_kwargs=None,
+        visualize_reward=False,
+        height=84,
+        width=84,
+        camera_id=0,
+        frame_skip=1,
+        channels_first=True,
+        from_pixels=False,
+        gray_scale=False,
+        warmstart=True,
+        # info: https://github.com/deepmind/dm_control/issues/64
+        no_gravity=False,
+        non_newtonian=False,
+        skip_start=None,  # useful in Manipulator for letting things settle
+        space_dtype=None,  # default to float for consistency
+    ):
+        self.env = suite.load(
+            domain_name,
+            task_name,
+            task_kwargs=task_kwargs,
+            environment_kwargs=environment_kwargs,
+            visualize_reward=visualize_reward,
+        )
+        self.metadata = {
+            "render.modes": ["human", "rgb_array"],
+            "video.frames_per_second": round(1.0 / self.env.control_timestep()),
+        }
 
         self.from_pixels = from_pixels
         self.gray_scale = gray_scale
@@ -70,14 +90,23 @@ class DMCEnv(gym.Env):
         obs_spec = self.env.observation_spec()
         if from_pixels:
             color_dim = 1 if gray_scale else 3
-            image_shape = [color_dim, width, height] if channels_first else [width, height, color_dim]
+            image_shape = (
+                [color_dim, width, height]
+                if channels_first
+                else [width, height, color_dim]
+            )
             self.observation_space = convert_dm_control_to_gym_space(
-                obs_spec, dtype=space_dtype,
-                pixels=spaces.Box(low=0, high=255, shape=image_shape, dtype=np.uint8)
+                obs_spec,
+                dtype=space_dtype,
+                pixels=spaces.Box(low=0, high=255, shape=image_shape, dtype=np.uint8),
             )
         else:
-            self.observation_space = convert_dm_control_to_gym_space(obs_spec, dtype=space_dtype)
-        self.action_space = convert_dm_control_to_gym_space(self.env.action_spec(), dtype=space_dtype)
+            self.observation_space = convert_dm_control_to_gym_space(
+                obs_spec, dtype=space_dtype
+            )
+        self.action_space = convert_dm_control_to_gym_space(
+            self.env.action_spec(), dtype=space_dtype
+        )
         self.viewer = None
 
         self.render_kwargs = dict(
@@ -126,7 +155,7 @@ class DMCEnv(gym.Env):
 
         obs = ts.observation
         if self.from_pixels:
-            obs['pixels'] = self._get_obs_pixels()
+            obs["pixels"] = self._get_obs_pixels()
 
         return obs, reward, done, dict(sim_state=sim_state)
 
@@ -143,29 +172,33 @@ class DMCEnv(gym.Env):
             obs = self.env.step([0]).observation
 
         if self.from_pixels:
-            obs['pixels'] = self._get_obs_pixels()
+            obs["pixels"] = self._get_obs_pixels()
 
         return obs
 
-    def render(self, mode='human', height=None, width=None, camera_id=0, **kwargs):
+    def render(
+        self, mode="human", height=None, width=None, camera_id=0, **kwargs
+    ) -> Union[NDArray, Image.Image]:
         img = self.env.physics.render(
-            width=self.render_kwargs['width'] if width is None else width,
-            height=self.render_kwargs['height'] if height is None else height,
-            camera_id=self.render_kwargs['camera_id'] if camera_id is None else camera_id,
-            **kwargs)
-        if mode in ['rgb', 'rgb_array']:
+            width=self.render_kwargs["width"] if width is None else width,
+            height=self.render_kwargs["height"] if height is None else height,
+            camera_id=self.render_kwargs["camera_id"]
+            if camera_id is None
+            else camera_id,
+            **kwargs,
+        )
+        if mode in ["rgb", "rgb_array"]:
             return img.astype(np.uint8)
-        elif mode in ['gray', 'grey']:
+        elif mode in ["gray", "grey"]:
             return img.mean(axis=-1, keepdims=True).astype(np.uint8)
-        elif mode == 'notebook':
+        elif mode == "notebook":
             from IPython.display import display
-            from PIL import Image
-            img = Image.fromarray(img, "RGB")
-            display(img)
-            return img
-        elif mode == 'human':
-            from PIL import Image
-            return Image.fromarray(img)
+
+            pil_img = Image.fromarray(img, "RGB")
+            display(pil_img)
+            return img.astype(np.uint8)
+        elif mode == "human":
+            return img.astype(np.uint8)
         else:
             raise NotImplementedError(f"`{mode}` mode is not implemented")
 
