@@ -13,7 +13,7 @@ setup(
     packages=find_packages(exclude="specs"),
     install_requires=[
         # gym 0.21.0 requires the lower pip version. Modifying pip version is really not ideal.
-        "setuptools==65.5.0",
+        "setuptools==65.5.1",
         "gym==0.21.0",
         "dm_control",
         "numpy",
