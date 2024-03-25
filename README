@@ -9,6 +9,7 @@ Link to other OpenAI Gym Plugins:
 Update Log
 ----------
 
+-  **2024-03-25**: Return ``np.Array`` from ``env.render()`` function
 -  **2022-01-13**: Add space_dtype for overriding the dtype for the
    state and action spaces. Default to None, need to set to
    ``float/np.float32`` for pytorch_SAC implementation.

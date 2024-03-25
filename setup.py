@@ -11,9 +11,8 @@ with open(Path(__file__).parent / "README", encoding="utf-8") as f:
 setup(
     name="gym-dmc",
     packages=find_packages(exclude="specs"),
+    # gym 0.21.0 requires the lower pip version. Modifying pip version is really not ideal.
     install_requires=[
-        # gym 0.21.0 requires the lower pip version. Modifying pip version is really not ideal.
-        "setuptools==65.5.0",
         "gym==0.21.0",
         "dm_control",
         "numpy",
