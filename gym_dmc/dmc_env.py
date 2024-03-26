@@ -176,6 +176,12 @@ class DMCEnv(gym.Env):
     def render(
         self, mode="human", height=None, width=None, camera_id=0, **kwargs
     ) -> NDArray:
+        if kwargs.get("depth", None):
+            print("is depth")
+
+        if mode == "depth":
+            kwargs["depth"] = True
+
         img = self.env.physics.render(
             width=self.render_kwargs["width"] if width is None else width,
             height=self.render_kwargs["height"] if height is None else height,
@@ -184,8 +190,10 @@ class DMCEnv(gym.Env):
             else camera_id,
             **kwargs,
         )
-        if mode in ["rgb", "rgb_array"]:
+        if mode in ["rgb", "rgb_array", "human"]:
             return img.astype(np.uint8)
+        elif mode == "depth":
+            return img
         elif mode in ["gray", "grey"]:
             return img.mean(axis=-1, keepdims=True).astype(np.uint8)
         elif mode == "notebook":
@@ -194,8 +202,6 @@ class DMCEnv(gym.Env):
 
             pil_img = Image.fromarray(img, "RGB")
             display(pil_img)
-            return img.astype(np.uint8)
-        elif mode == "human":
             return img.astype(np.uint8)
         else:
             raise NotImplementedError(f"`{mode}` mode is not implemented")
