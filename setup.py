@@ -17,6 +17,10 @@ setup(
         "dm_control",
         "numpy",
     ],
+    # gym requires
+    # pip install setuptools==65.5.0
+    # pip install wheel==0.38.4
+    # pip install gym-dmc
     description="gym-dmc is a gym wrapper around DeepMind Control Suite domains.",
     long_description=long_description,
     author="Ge Yang<ge.ike.yang@gmail.com>",
