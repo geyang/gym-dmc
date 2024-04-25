@@ -11,6 +11,16 @@ Link to other OpenAI Gym Plugins:
 - **2022-01-13**: Add space_dtype for overriding the dtype for the state and action spaces. Default to None, need to set to `float/np.float32` for pytorch_SAC implementation.
 - **2022-01-11**: Added a `env._get_obs()` method to allow one to obtain the observation after resetting the environment. **Version: `v0.2.1`**
 
+## Installation
+
+The `dm_control` dependency relies on lower versions of setuptools and wheel. Downgrade to fix the installation error.
+
+```shell
+pip install setuptools==65.5.0
+pip install wheel==0.38.4
+pip install gym-dmc
+```
+
 ## How To Use
 
 Usage pattern:
