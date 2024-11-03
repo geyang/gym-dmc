@@ -1,9 +1,7 @@
-from typing import Optional
-
-import gym
+from gym_dmc.gym.core import Wrapper
 
 
-class OrderEnforcing(gym.Wrapper):
+class OrderEnforcing(Wrapper):
     def __init__(self, env):
         super().__init__(env)
         self._has_reset = False

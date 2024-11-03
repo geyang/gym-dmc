@@ -1,4 +1,5 @@
-from ..gym.core import Wrapper
+from gym_dmc.gym.core import Wrapper
+
 
 class TimeLimit(Wrapper):
     def __init__(self, env, max_episode_steps=None):
