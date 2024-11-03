@@ -10,8 +10,7 @@ from typing import (
     Type,
 )
 
-from gym.utils import seeding
-
+from gym_dmc.gym.utils.seeding import RandomNumberGenerator, np_random
 
 T_cov = TypeVar("T_cov", covariant=True)
 
@@ -46,7 +45,7 @@ class Space(Generic[T_cov]):
             self.seed(seed)
 
     @property
-    def np_random(self) -> seeding.RandomNumberGenerator:
+    def np_random(self) -> RandomNumberGenerator:
         """Lazily seed the rng since this is expensive and only needed if
         sampling from this space.
         """
@@ -67,7 +66,7 @@ class Space(Generic[T_cov]):
 
     def seed(self, seed: Optional[int] = None) -> list:
         """Seed the PRNG of this space."""
-        self._np_random, seed = seeding.np_random(seed)
+        self._np_random, seed = np_random(seed)
         return [seed]
 
     def contains(self, x) -> bool:

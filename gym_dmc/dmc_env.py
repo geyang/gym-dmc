@@ -1,9 +1,10 @@
-from .gym import spaces
-from .gym.core import Env
 import numpy as np
 from dm_control import suite
 from dm_env import specs
 from numpy.typing import NDArray
+
+from .gym import spaces
+from .gym.core import Env
 
 
 def convert_dm_control_to_gym_space(dm_control_space, dtype=None, **kwargs):
@@ -16,9 +17,7 @@ def convert_dm_control_to_gym_space(dm_control_space, dtype=None, **kwargs):
         )
         assert space.shape == dm_control_space.shape
         return space
-    elif isinstance(dm_control_space, specs.Array) and not isinstance(
-        dm_control_space, specs.BoundedArray
-    ):
+    elif isinstance(dm_control_space, specs.Array) and not isinstance(dm_control_space, specs.BoundedArray):
         space = spaces.Box(
             low=-float("inf"),
             high=float("inf"),
@@ -27,17 +26,14 @@ def convert_dm_control_to_gym_space(dm_control_space, dtype=None, **kwargs):
         )
         return space
     elif isinstance(dm_control_space, dict):
-        kwargs.update(
-            {
-                key: convert_dm_control_to_gym_space(value, dtype=dtype)
-                for key, value in dm_control_space.items()
-            }
-        )
+        kwargs.update({key: convert_dm_control_to_gym_space(value, dtype=dtype) for key, value in dm_control_space.items()})
         space = spaces.Dict(kwargs)
         return space
 
 
 class DMCEnv(Env):
+    _spec = None
+
     @property
     def spec(self):
         return self._spec
@@ -87,23 +83,15 @@ class DMCEnv(Env):
         obs_spec = self.env.observation_spec()
         if from_pixels:
             color_dim = 1 if gray_scale else 3
-            image_shape = (
-                [color_dim, width, height]
-                if channels_first
-                else [width, height, color_dim]
-            )
+            image_shape = [color_dim, width, height] if channels_first else [width, height, color_dim]
             self.observation_space = convert_dm_control_to_gym_space(
                 obs_spec,
                 dtype=space_dtype,
                 pixels=spaces.Box(low=0, high=255, shape=image_shape, dtype=np.uint8),
             )
         else:
-            self.observation_space = convert_dm_control_to_gym_space(
-                obs_spec, dtype=space_dtype
-            )
-        self.action_space = convert_dm_control_to_gym_space(
-            self.env.action_spec(), dtype=space_dtype
-        )
+            self.observation_space = convert_dm_control_to_gym_space(obs_spec, dtype=space_dtype)
+        self.action_space = convert_dm_control_to_gym_space(self.env.action_spec(), dtype=space_dtype)
         self.viewer = None
 
         self.render_kwargs = dict(
@@ -173,9 +161,7 @@ class DMCEnv(Env):
 
         return obs
 
-    def render(
-        self, mode="human", height=None, width=None, camera_id=0, **kwargs
-    ) -> NDArray:
+    def render(self, mode="human", height=None, width=None, camera_id=0, **kwargs) -> NDArray:
         if kwargs.get("depth", None):
             print("is depth")
 
@@ -185,9 +171,7 @@ class DMCEnv(Env):
         img = self.env.physics.render(
             width=self.render_kwargs["width"] if width is None else width,
             height=self.render_kwargs["height"] if height is None else height,
-            camera_id=self.render_kwargs["camera_id"]
-            if camera_id is None
-            else camera_id,
+            camera_id=self.render_kwargs["camera_id"] if camera_id is None else camera_id,
             **kwargs,
         )
         if mode in ["rgb", "rgb_array", "human"]:

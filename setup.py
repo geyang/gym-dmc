@@ -10,7 +10,12 @@ with open(Path(__file__).parent / "README", encoding="utf-8") as f:
 
 setup(
     name="gym-dmc",
-    packages=find_packages(exclude=["specs", "notebooks"]),
+    packages=find_packages(
+        exclude=[
+            "specs",
+            "notebooks",
+        ]
+    ),
     # gym 0.21.0 requires the lower pip version. Modifying pip version is really not ideal.
     install_requires=[
         "dm_control",
