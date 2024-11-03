@@ -30,12 +30,23 @@ def test_flat_space_dtype():
 
 
 def test_channel_first():
-    env = gym_dmc.make("dmc:Walker-walk-v1", from_pixels=True, frame_skip=8, channels_first=False)
+    env = gym_dmc.make(
+        "dmc:Walker-walk-v1",
+        from_pixels=True,
+        frame_skip=8,
+        channels_first=False,
+    )
     assert env.spec.max_episode_steps == 125
     assert env.reset().shape == (84, 84, 3)
 
 
 def test_gray_scale():
-    env = gym_dmc.make("dmc:Walker-walk-v1", from_pixels=True, frame_skip=8, channels_first=False, gray_scale=True)
+    env = gym_dmc.make(
+        "dmc:Walker-walk-v1",
+        from_pixels=True,
+        frame_skip=8,
+        channels_first=False,
+        gray_scale=True,
+    )
     assert env.spec.max_episode_steps == 125
     assert env.reset().shape == (84, 84, 1)

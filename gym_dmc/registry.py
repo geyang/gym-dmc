@@ -97,7 +97,6 @@ class EnvSpec:
 
     def __post_init__(self):
         self.namespace, self.name, self.version = parse_env_id(self.id_requested)
-        print(self)
 
     @property
     def eid(self) -> str:
