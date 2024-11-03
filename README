@@ -17,6 +17,18 @@ Update Log
    obtain the observation after resetting the environment. **Version:
    ``v0.2.1``**
 
+Installation
+------------
+
+The ``dm_control`` dependency relies on lower versions of setuptools and
+wheel. Downgrade to fix the installation error.
+
+.. code-block:: shell
+
+   pip install setuptools==65.5.0
+   pip install wheel==0.38.4
+   pip install gym-dmc
+
 How To Use
 ----------
 

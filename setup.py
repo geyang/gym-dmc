@@ -10,17 +10,19 @@ with open(Path(__file__).parent / "README", encoding="utf-8") as f:
 
 setup(
     name="gym-dmc",
-    packages=find_packages(exclude="specs"),
+    packages=find_packages(exclude=["specs", "notebooks"]),
     # gym 0.21.0 requires the lower pip version. Modifying pip version is really not ideal.
     install_requires=[
-        "gym==0.21.0",
         "dm_control",
         "numpy",
     ],
+    # update: removed gym
+    #
     # gym requires
-    # pip install setuptools==65.5.0
-    # pip install wheel==0.38.4
-    # pip install gym-dmc
+    #
+    # > pip install setuptools==65.5.0
+    # > pip install wheel==0.38.4
+    # > pip install gym-dmc
     description="gym-dmc is a gym wrapper around DeepMind Control Suite domains.",
     long_description=long_description,
     author="Ge Yang<ge.ike.yang@gmail.com>",

@@ -1,8 +1,8 @@
-import gym
+from .gym import spaces
+from .gym.core import Env
 import numpy as np
 from dm_control import suite
 from dm_env import specs
-from gym import spaces
 from numpy.typing import NDArray
 
 
@@ -37,7 +37,7 @@ def convert_dm_control_to_gym_space(dm_control_space, dtype=None, **kwargs):
         return space
 
 
-class DMCEnv(gym.Env):
+class DMCEnv(Env):
     @property
     def spec(self):
         return self._spec
