@@ -18,9 +18,10 @@ def convert_dm_control_to_gym_space(dm_control_space, dtype=None, **kwargs):
         assert space.shape == dm_control_space.shape
         return space
     elif isinstance(dm_control_space, specs.Array) and not isinstance(dm_control_space, specs.BoundedArray):
+        # in the past this has caused the physics to blow up. Changing to π.
         space = spaces.Box(
-            low=-float("inf"),
-            high=float("inf"),
+            low=-np.pi,
+            high=np.pi,
             shape=dm_control_space.shape,
             dtype=dtype or dm_control_space.dtype,
         )
