@@ -8,9 +8,9 @@ class FlattenObservation(ObservationWrapper):
     Note: Different from the default gym wrapper by adding _get_obs function
     """
 
-    def __init__(self, env, incude_original=False):
+    def __init__(self, env, include_original=False):
         super(FlattenObservation, self).__init__(env)
-        self.__include_original = incude_original
+        self.__include_original = include_original
 
         self.observation_space = spaces.flatten_space(env.observation_space)
 
